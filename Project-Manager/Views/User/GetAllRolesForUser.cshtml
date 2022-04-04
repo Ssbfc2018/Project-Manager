@@ -1,0 +1,13 @@
+﻿<h3>Get all Roles for a paticular User</h3>
+<form asp-action="GetAllRolesForUser" method="post">
+    <select asp-items=@ViewBag.users name="userId"></select>
+    <button type="submit">Get</button>
+</form>
+
+<div>
+    <h6>@ViewBag.userName's Roles</h6>
+    @foreach(string r in @ViewBag.Roles)
+    {
+        <p>r</p>
+    }
+</div>
