@@ -1,0 +1,8 @@
+﻿<h3>Add User To Role</h3>
+<form asp-action="AddUserToRole" method="post">
+    <select asp-items=@ViewBag.users name="userId"></select>
+    <select asp-items=@ViewBag.roles name="roleId"></select>
+    <button type="submit">Add</button>
+</form>
+
+<div>@ViewBag.SuccessMessage</div>
