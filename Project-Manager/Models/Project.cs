@@ -11,5 +11,6 @@
         public ICollection<Todo> Todos { get; set; }
         public string ManagerId { get; set; }
         public ApplicationUser Manager { get; set; }
+        public string Name { get; internal set; }
     }
 }
