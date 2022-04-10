@@ -34,6 +34,11 @@ namespace TaskTank.Models
                 }
             }
 
+            if (project.UserProjects.Count != 0)
+            {
+                db.UserProjects.RemoveRange(project.UserProjects);
+            }
+
             db.Projects.Remove(project);
             db.SaveChanges();
             return "The project you have choosen was deleted and its tasks as well";

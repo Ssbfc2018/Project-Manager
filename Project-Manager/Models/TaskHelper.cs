@@ -15,14 +15,14 @@ namespace TaskTank.Models
         {
             return db.Todos.ToList();
         }
-        public static Todo AddTask(string content)
+        public static Todo AddTask(Project project, string title)
         {
             Todo task = new Todo
             {
-                Content = content,
+                Title = title,
                 Completion = 0,
-                Completed = false
-
+                Completed = false,
+                ProjectId = project.Id
             };
 
             return task;
@@ -37,7 +37,10 @@ namespace TaskTank.Models
             if (todo.DeveloperId != null)
             {
                 ApplicationUser developer = (ApplicationUser)db.Users.FirstOrDefault(u => u.Id == todo.DeveloperId);
-                developer.Todos.Remove(todo);
+                UserProject task = db.UserProjects.FirstOrDefault(up => up.ProjectId == project.Id);
+                project.UserProjects.Remove(task);
+                developer.UserProjects.Remove(task);
+                db.UserProjects.Remove(task);
             }
 
             db.Todos.Remove(todo);
@@ -53,10 +56,22 @@ namespace TaskTank.Models
             db.SaveChanges();
         }
 
-        public static void AssignTaskToDeveloper(string Id, int id)
+        public static void AssignTaskToDeveloper(string developerId, int todoId)
         {
-            Todo todo = db.Todos.FirstOrDefault(t => t.Id == id);
-            todo.DeveloperId = Id;
+            Todo todo = db.Todos.FirstOrDefault(t => t.Id == todoId);
+            todo.DeveloperId = developerId;
+
+            UserProject userProject = new UserProject()
+            {
+                UserId = developerId,
+                ProjectId = todo.ProjectId.Value
+            };
+            ApplicationUser developer = (ApplicationUser)db.Users.FirstOrDefault(u => u.Id == developerId);
+            developer.UserProjects.Add(userProject);
+            Project project = db.Projects.FirstOrDefault(p => p.Id == todo.ProjectId.Value);
+            project.UserProjects.Add(userProject);
+            db.UserProjects.Add(userProject);
+
             db.SaveChanges();
         }
 

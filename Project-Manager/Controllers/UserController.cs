@@ -125,6 +125,7 @@ namespace Project_Manager.Controllers
 
             return View();
         }
+        [HttpPost]
         public async Task<IActionResult> GetAllRolesForUser(string? userId)
         {
             try

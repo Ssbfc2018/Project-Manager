@@ -19,8 +19,13 @@
 
         public int? ProjectId { get; set; }
         public Project? Project { get; set; }
-        public string DeveloperId { get; set; }
-        public ApplicationUser Developer { get; set; }
+        public string? DeveloperId { get; set; }
+        public ApplicationUser? Developer { get; set; }
         public ICollection<Comment> Comments { get; set; }
+
+        public Todo()
+        {
+            Comments = new List<Comment>();
+        }
     }
 }
