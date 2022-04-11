@@ -16,6 +16,7 @@
         public bool Completed { get; set; }
         public int Completion { get; set; }
         public Priority Priority { get; set; }
+        public bool Hide { get; set; }
 
         public int? ProjectId { get; set; }
         public Project? Project { get; set; }

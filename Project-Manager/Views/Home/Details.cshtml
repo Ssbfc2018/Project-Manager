@@ -1,0 +1,158 @@
+﻿@model IEnumerable<Project_Manager.Models.Todo>
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+
+@if (ViewBag.roles.Contains("Admin") || ViewBag.roles.Contains("Manager"))
+{
+    <form asp-action="CreateTodo" asp-controller="Project" method="get">
+        <input type="hidden" name="projectId" value="@ViewBag.projectId" />
+        <button type="submit">Create New Task</button>
+    </form>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deadline)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Completed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Completion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deadline)
+            </td>
+            <td>
+                @if (item.Completed)
+                {
+                    <p>Completed</p>
+                }
+                else
+                {
+                    <form asp-action="MarkAsComplete" asp-controller="Project" asp-route-todoId="@item.Id">
+                        <button type="submit">Mark As Completed</button>
+                    </form>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Completion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (item.Completed)
+                {
+                    <form asp-action="HideCompletedProject" asp-controller="Project" asp-route-projectId="@item.Id">
+                        <button type="submit">Hide</button>
+                    </form>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@if (ViewBag.completedTodo != null)
+{
+    <h3>Completed Tasks</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Content)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Deadline)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Completed)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Priority)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Project)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.completedTodo) {
+                <tr>
+                    <td>
+                        @item.Title
+                    </td>
+                    <td>
+                        @item.Content
+                    </td>
+                    <td>
+                        @item.Deadline
+                    </td>
+                    <td>
+                        Completed
+                    </td>
+                    <td>
+                        @item.Priority
+                    </td>
+                    <td>
+                        @item.ProjectId
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Comment" asp-controller="Project" asp-route-todoId="@item.Id">Comment</a>
+                        @if(ViewBag.roles.Contains("Admin") || ViewBag.roles.Contains("Manager"))
+                        {
+                            <form asp-action="DeleteTask" asp-controller="Project" asp-route-todoId="@item.Id">
+                                <button type="submit">Delete</button>
+                           </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>    
+}
