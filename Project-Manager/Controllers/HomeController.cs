@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Project_Manager.Data;
 using Project_Manager.Models;
 using System.Diagnostics;
@@ -55,10 +56,8 @@ namespace Project_Manager.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> Dashboard()
         {
-            string userName=User.Identity.Name;
-            
-
-            return View();
+            return View(_db.Projects.Include(p=>p.Todos).ThenInclude(t=>t.DeveloperId)
+                .OrderByDescending(p=>p.Priority));
         }
 
         public async Task<IActionResult> Details(int projectId)
@@ -66,10 +65,34 @@ namespace Project_Manager.Controllers
             var userTodoProjects = _db.Todos.Where(td => td.ProjectId == projectId);
 
             string userName = User.Identity.Name;
-            ApplicationUser user = _db.Users.FirstOrDefault(u => u.UserName == userName);
-            List<Todo> todoList = userTodoProjects.Where(utp => utp.DeveloperId == user.Id).ToList();
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            List<IdentityUserRole<string>> role = _db.UserRoles.Where(ur => ur.UserId == user.Id).ToList();
+            List<string> roleName = new List<string>();
+            foreach (IdentityUserRole<string> r in role)
+            {
+                roleName.Add((await _db.Roles.FindAsync(r.RoleId)).Name);
+            }
+            ViewBag.roles = roleName;
 
-            return View(todoList);
+            if (roleName.Contains("Developer"))
+            {
+                var todoList = _db.Todos.Where(td => td.ProjectId == projectId);
+                userTodoProjects = todoList.Where(utp => utp.DeveloperId == user.Id);
+            }
+            
+            Project? projectExits = _db.Projects.Include(p => p.Todos).FirstOrDefault(p => p.Id == projectId);
+            if (projectExits != null)
+            {
+                if(projectExits.Todos.Where(t => t.Completed == true).Where(t => t.Hide == false) != null)
+                {
+                    ViewBag.completedTodo = projectExits.Todos.Where(t => t.Completed == true).Where(t => t.Hide == false).ToList();
+                }
+            }
+            ViewBag.completedTodo = null;
+
+            ViewBag.projectId = projectId;
+
+            return View(userTodoProjects);
         }
 
         public IActionResult Privacy()

@@ -6,11 +6,21 @@
 
 <h1>All Projects</h1>
 
-<p>
-    <a asp-page="AdminPage">User Manager</a>
-    <a asp-page="CreateProject">Create New Project</a>
-    <a asp-action="Dashboard">Dashboard</a>
-</p>
+@if (ViewBag.roles.Contains("Admin") || ViewBag.roles.Contains("Manager"))
+{
+    <form asp-action="AdminPage" asp-controller="User" style="float:left;margin-right:10px">
+        <button type="submit">User Manager</button>
+    </form>
+    <form asp-action="CreateProject" asp-controller="Project" method="get">
+        <button type="submit">Create New Project</button>
+    </form>
+}
+@if (ViewBag.roles.Contains("Manager"))
+{
+    <form asp-action="Dashboard">
+        <button type="submit">Dashboard</button>
+    </form>
+}
 
 <table class="table">
     <thead>
@@ -39,11 +49,11 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Details" asp-route-projectId="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 @if (item.CompletionPercentage == 100)
                 {
-                    <form asp-action="HideCompletedProject" asp-route-projectId="@item.Id">
+                    <form asp-action="HideCompletedProject" asp-controller="Project" asp-route-projectId="@item.Id">
                         <button type="submit">Hide</button>
                     </form>
                 }
