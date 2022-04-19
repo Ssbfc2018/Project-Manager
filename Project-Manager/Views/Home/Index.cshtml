@@ -48,9 +48,9 @@
                 @Html.DisplayFor(modelItem => item.CompletionPercentage)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="EditProject" asp-controller="Project" asp-route-projectId="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-projectId="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="DeleteProject" asp-Controller="Project" asp-route-projectid="@item.Id">Delete</a>
                 @if (item.CompletionPercentage == 100)
                 {
                     <form asp-action="HideCompletedProject" asp-controller="Project" asp-route-projectId="@item.Id">

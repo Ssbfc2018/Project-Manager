@@ -36,13 +36,13 @@ namespace Project_Manager.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddUserToRole(string? userId, string? roleId)
+        public async Task<IActionResult> AddRoleToUser(string? userId, string? roleId)
         {
             try
             {
                 if (userId != null && roleId != null)
                 {
-                    ApplicationUser user = await _userManager.FindByNameAsync(userId);
+                    ApplicationUser user = await _userManager.FindByIdAsync(userId);
                     IdentityRole role = await _roleManager.FindByIdAsync(roleId);
 
                     if (user != null && role != null)
@@ -54,11 +54,11 @@ namespace Project_Manager.Controllers
                             await _userManager.AddToRoleAsync(user, role.Name);
                             _db.SaveChanges();
 
-                            ViewBag.SuccessMessage = $"Assigned ${user.Email} as ${role.Name}";
+                            ViewBag.SuccessMessage = $"Assigned {user.Email} as {role.Name}";
                         }
                         else
                         {
-                            ViewBag.SuccessMessage = $"${user.Email} is already in ${role.Name}";
+                            ViewBag.SuccessMessage = $"{user.Email} is already in {role.Name}";
                         }
 
                         ViewBag.users = new SelectList(_db.Users, "Id", "Email");
@@ -91,7 +91,7 @@ namespace Project_Manager.Controllers
             {
                 if (userId != null && roleId != null)
                 {
-                    ApplicationUser user = await _userManager.FindByNameAsync(userId);
+                    ApplicationUser user = await _userManager.FindByIdAsync(userId);
                     IdentityRole role = await _roleManager.FindByIdAsync(roleId);
 
                     if (user != null && role != null)
@@ -100,12 +100,17 @@ namespace Project_Manager.Controllers
 
                         if (userAlreadyInRole)
                         {
-                            ViewBag.SuccessMessage = $"${user.Email} is not in ${role.Name}";
+                            ViewBag.SuccessMessage = $"{user.Email} is already in {role.Name}";
                         }
                         else
                         {
-                            ViewBag.SuccessMessage = $"${user.Email} is already in ${role.Name}";
+                            ViewBag.SuccessMessage = $"{user.Email} is not in {role.Name}";
                         }
+
+                        ViewBag.users = new SelectList(_db.Users, "Id", "Email");
+                        ViewBag.roles = new SelectList(_db.Roles, "Id", "Name");
+
+                        return View();
                     }
                 }
 
@@ -122,6 +127,7 @@ namespace Project_Manager.Controllers
         public IActionResult GetAllRolesForUser()
         {
             ViewBag.users = new SelectList(_db.Users, "Id", "Email");
+            ViewBag.role = new List<string>() { };
 
             return View();
         }
@@ -132,19 +138,23 @@ namespace Project_Manager.Controllers
             {
                 if (userId != null)
                 {
-                    ApplicationUser user = await _userManager.FindByNameAsync(userId);
+                    ApplicationUser user = await _userManager.FindByIdAsync(userId);
                     ViewBag.userName=user.UserName;
                     List<IdentityRole> roles=_db.Roles.ToList();
+                    ViewBag.roles = new List<string>();
                     if (user != null)
                     {
                         foreach(IdentityRole ir in roles)
                         {
                             if(await _userManager.IsInRoleAsync(user, ir.Name)){
-                                ViewBag.Roles.Add(ir.Name);
+                                ViewBag.roles.Add(ir.Name);
                             }
                         }
                     }
 
+                    ViewBag.users = new SelectList(_db.Users, "Id", "Email");
+
+                    return View();
                 }
 
                 return NotFound();
@@ -154,8 +164,6 @@ namespace Project_Manager.Controllers
             {
                 return RedirectToAction("Error", new { message = ex.Message });
             }
-
-            return View();
         }
     }
 }

@@ -1,0 +1,73 @@
+﻿@model Project_Manager.Models.Todo
+
+@{
+    ViewData["Title"] = "EditTodo";
+}
+
+<h1>Edit</h1>
+
+<h4>Task</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditTodo">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" value="@ViewBag.editItem.Id"/>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" value="@ViewBag.editItem.Title" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" value="@ViewBag.editItem.Content" />
+                <span asp-validation-for="Content" class="text-danger"></span>                    
+            </div>
+            <div class="form-group">
+                <label asp-for="Deadline" class="control-label"></label>
+                <input asp-for="Deadline" class="form-control" value="@ViewBag.editItem.Deadline" />
+                <span asp-validation-for="Deadline" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Completed" /> @Html.DisplayNameFor(model => model.Completed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Completion" class="control-label"></label>
+                <input asp-for="Completion" class="form-control" value="@ViewBag.editItem.Completion" />
+                <span asp-validation-for="Completion" class="text-danger"></span>
+            </div>
+             <div class="form-group">
+                <label asp-for="Priority" class="control-label"></label>
+                <select name="priority" class="form-control">
+                    <option value="Urgent">Urgent</option>
+                    <option value="Important">Important</option>
+                    <option value="Normal">Normal</option>
+                </select>
+                <span asp-validation-for="Priority" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Hide" /> @Html.DisplayNameFor(model => model.Hide)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Developer" class="control-label"></label>
+                <select asp-for="DeveloperId" asp-items=@ViewBag.developers class="form-control"></select>
+                <span asp-validation-for="DeveloperId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

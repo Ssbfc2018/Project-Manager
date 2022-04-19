@@ -43,7 +43,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -61,6 +61,10 @@
                 }
                 else
                 {
+                    <form asp-action="ChangeCompletion" asp-controller="Project" asp-route-todoId="@item.Id">
+                        <input type="range" name="newCompletion" min="0" max="100" value="@item.Completion" style="float:left" />
+                        <button type="submit">Change Completion</button>
+                    </form>
                     <form asp-action="MarkAsComplete" asp-controller="Project" asp-route-todoId="@item.Id">
                         <button type="submit">Mark As Completed</button>
                     </form>
@@ -76,9 +80,9 @@
                 @Html.DisplayFor(modelItem => item.ProjectId)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="EditTodo" asp-controller="Project" asp-route-todoId="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="DeleteTodo" asp-controller="Project" asp-route-todoId="@item.Id">Delete</a>
                 @if (item.Completed)
                 {
                     <form asp-action="HideCompletedProject" asp-controller="Project" asp-route-projectId="@item.Id">

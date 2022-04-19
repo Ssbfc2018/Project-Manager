@@ -4,10 +4,13 @@
     <button type="submit">Get</button>
 </form>
 
-<div>
-    <h6>@ViewBag.userName's Roles</h6>
-    @foreach(string r in @ViewBag.Roles)
-    {
-        <p>r</p>
-    }
-</div>
+@if (ViewBag.roles!=null)
+{
+    <div>
+        <h6>@ViewBag.userName's Roles</h6>
+        @foreach(string r in @ViewBag.roles)
+        {
+            <p>@r</p>
+        }
+    </div>  
+}
